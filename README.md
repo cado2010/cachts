@@ -103,3 +103,7 @@ To play from a position, paste a FEN into the box and press **Create Board**. Yo
 | `data` | Opening book |
 | `e2e` | Browser tests |
 | `tools/golden-eval` | One-off C# tool that generated the evaluation test fixtures |
+
+## License
+
+Licensed under the [GNU General Public License v3.0](LICENSE).

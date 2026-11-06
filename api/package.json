@@ -1,0 +1,26 @@
+{
+  "name": "@cachts/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev/server.ts",
+    "start": "node src/server.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@cachts/shared": "*",
+    "@napi-rs/canvas": "^0.1.60",
+    "express": "^5.1.0",
+    "pino": "^9.6.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.0.0",
+    "@types/supertest": "^6.0.0",
+    "chess.js": "^1.4.0",
+    "supertest": "^7.0.0",
+    "vitest": "^3.0.0"
+  }
+}

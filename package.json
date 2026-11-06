@@ -1,0 +1,25 @@
+{
+  "name": "cachts",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "workspaces": ["shared", "api", "web", "desktop"],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w api\" \"npm run dev -w web\"",
+    "build": "npm run build -w web",
+    "start": "npm run start -w api",
+    "typecheck": "tsc --noEmit -p api && tsc --noEmit -p web && tsc --noEmit -p desktop",
+    "test": "npm run typecheck && npm test -w api && npm test -w web",
+    "test:e2e": "playwright test",
+    "bench": "node api/test/bench.ts",
+    "desktop": "npm run start -w desktop",
+    "desktop:dist": "npm run dist -w desktop",
+    "test:desktop": "npm run build -w desktop && playwright test -c playwright.desktop.config.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "concurrently": "^9.0.0",
+    "typescript": "^5.8.0"
+  }
+}

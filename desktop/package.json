@@ -1,0 +1,55 @@
+{
+  "name": "@cachts/desktop",
+  "productName": "Cach",
+  "version": "1.0.0",
+  "description": "Cach chess, as a standalone desktop app",
+  "author": "Cach",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.cjs",
+  "scripts": {
+    "build": "node scripts/build.ts",
+    "start": "npm run build && electron .",
+    "dist": "npm run build && electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0",
+    "esbuild": "^0.25.12"
+  },
+  "build": {
+    "appId": "com.cach.chess",
+    "productName": "Cach",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/main.cjs",
+      "dist/preload.cjs",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "dist/server",
+        "to": "server"
+      }
+    ],
+    "npmRebuild": false,
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "Cach-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Cach-Portable-${version}.${ext}"
+    }
+  }
+}

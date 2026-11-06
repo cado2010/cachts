@@ -24,6 +24,33 @@ npm run build
 npm start
 ```
 
+## Desktop app
+
+The Electron shell runs Cach in its own window and starts the server for you, so you don't need `npm run dev` or a browser:
+
+```
+npm install
+npm run desktop
+```
+
+`yarn desktop` also works. The first run downloads Electron.
+
+To start it from any folder with the `cachts` command, run `npm link` once in this folder.
+
+The command builds the UI and a bundled copy of the server into `desktop/dist`, then opens the app. When the app starts, it:
+
+1. Picks a free local port, so it can run alongside `npm run dev`.
+2. Starts the API as a background process, on `127.0.0.1` only.
+3. Waits for the opening book to load, then opens the window.
+
+Closing the window stops the server. Only one copy of the app runs at a time, and launching it again brings the open window forward.
+
+Games are kept in memory, so closing the window ends the game. If a game is in progress, a popup asks you to confirm first. The server log is at `%APPDATA%\Cach\logs\server.log`.
+
+**This is a first draft.** The window has been seen closing by itself during startup in automated runs, and the cause isn't known yet.
+
+`npm run desktop:dist` is set up to build a Windows installer and a portable `.exe` in `desktop/release`, but it hasn't been run yet.
+
 ## Playing
 
 Type a move in the **Move/FEN** box and press Enter, or click a piece and then its destination. You play White unless you press **Play Black**.
@@ -46,6 +73,7 @@ To play from a position, paste a FEN into the box and press **Create Board**. Yo
 |---|---|
 | `npm test` | Type checks, then all API and web tests. Takes about 2 minutes, mostly comparing 1,000 random games with `chess.js` |
 | `npm run test:e2e` | Browser tests against the real server. Run `npx playwright install chromium` once first |
+| `npm run test:desktop` | Builds the desktop app and tests it. Windows open and close on your screen while it runs |
 | `npm run bench` | Depth-4 search timings |
 
 ## Configuration
@@ -68,6 +96,8 @@ To play from a position, paste a FEN into the box and press **Create Board**. Yo
 | `api/src/http` | Express routes |
 | `api/src/render` | Board PNG |
 | `api/dev` | Development runner, which restarts the API when its source changes |
+| `desktop` | Electron shell: main process, page bridge, build script and tests |
+| `bin` | The `cachts` command |
 | `web/src` | React UI |
 | `shared` | API types, board constants, piece images |
 | `data` | Opening book |

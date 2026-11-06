@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "bin": { "cachts": "bin/cachts.js" },
   "engines": { "node": ">=24" },
   "workspaces": ["shared", "api", "web", "desktop"],
   "scripts": {

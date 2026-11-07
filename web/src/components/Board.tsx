@@ -1,19 +1,8 @@
 // The board, from cachRendering/BoardRenderer.Render. Screen row 0 is the top of the board.
-import { BOARD_COLORS, type Color, type GameView, type PieceCode } from '@cachts/shared';
+import { BOARD_COLORS, type Color, type GameView } from '@cachts/shared';
 import { squareIndexAt, squareName } from '../view.ts';
+import { pieceName, pieceUrl } from './pieces.ts';
 
-const images = import.meta.glob<string>('../../../shared/assets/pieces/*.png', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-});
-const pieceUrl = (code: PieceCode): string => images[`../../../shared/assets/pieces/${code}.png`];
-
-const PIECE_NAMES: Record<string, string> = {
-  K: 'king', Q: 'queen', R: 'rook', B: 'bishop', N: 'knight', p: 'pawn',
-};
-const pieceName = (code: PieceCode): string =>
-  `${code[0] === 'w' ? 'white' : 'black'} ${PIECE_NAMES[code[1]]}`;
 
 interface Props {
   game: GameView;

@@ -51,7 +51,14 @@ body {
   gap: 16px;
   align-items: start;
 }
-.board-area { grid-area: board; }
+.board-area {
+  grid-area: board;
+  /* Keeps the board and its captured-piece rows on screen, leaving room for the header and controls. */
+  max-width: min(100%, calc(100vh - 330px));
+  min-width: min(100%, 320px);
+  margin: 0 auto;
+  width: 100%;
+}
 .controls { grid-area: controls; }
 .moves-panel { grid-area: moves; align-self: stretch; }
 
@@ -61,10 +68,6 @@ body {
   display: grid;
   grid-template-columns: var(--coord-size) minmax(0, 1fr) var(--coord-size);
   grid-template-rows: var(--coord-size) auto var(--coord-size);
-  /* Keeps the whole board on screen, leaving room for the header and controls. */
-  max-width: min(100%, calc(100vh - 270px));
-  min-width: min(100%, 320px);
-  margin: 0 auto;
 }
 .coords { display: grid; color: var(--coord); font-size: 0.75rem; place-items: center; user-select: none; }
 .coords.files { grid-template-columns: repeat(8, 1fr); grid-column: 2; }
@@ -94,6 +97,19 @@ body {
   cursor: pointer;
 }
 .square img { display: block; width: 100%; height: 100%; pointer-events: none; }
+
+/* Captured pieces: lined up with the squares, one small group per piece type. */
+.captured {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 8px;
+  min-height: 28px;
+  padding: 2px 20px;
+}
+.captured-group { display: inline-flex; }
+.captured-group img { width: 24px; height: 24px; }
+.captured-group img + img { margin-left: -12px; }
 .square[aria-disabled='true'] { cursor: default; }
 .square.last-move::after,
 .square.highlight::after {

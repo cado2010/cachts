@@ -44,6 +44,8 @@ export const isInProgress = (game: GameView): boolean =>
 const title = (c: Color): string => (c === 'white' ? 'White' : 'Black');
 export { title as colorTitle };
 
+export const other = (color: Color): Color => (color === 'white' ? 'black' : 'white');
+
 export function statusText(status: GameStatus): string {
   switch (status.state) {
     case 'active': return '';

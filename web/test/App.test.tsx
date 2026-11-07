@@ -28,6 +28,7 @@ const view = (over: Partial<GameView> = {}): GameView => ({
   status: { state: 'active' },
   pgn: [],
   lastMove: null,
+  captured: { white: [], black: [] },
   ...over,
 });
 const engineResponse = (game: GameView) => ({
@@ -569,5 +570,41 @@ describe('Always show current view', () => {
     expect(screen.getByRole('grid')).toHaveAttribute('data-view', 'white');
     await user.type(screen.getByLabelText('Move/FEN:'), 'e4{Enter}');
     await waitFor(() => expect(screen.getByRole('grid')).toHaveAttribute('data-view', 'black'));
+  });
+});
+
+describe('captured pieces', () => {
+  const captured = { white: ['bQ', 'bN', 'bp', 'bp'] as PieceCode[], black: ['wR'] as PieceCode[] };
+
+  it('shows the opponent at the top and you at the bottom, in rank order, with a spoken summary', async () => {
+    routes['POST /api/games'] = () => ({ status: 201, json: view({ captured }) });
+    render(<App />);
+    await ready();
+    const top = screen.getByTestId('captured-top');
+    const bottom = screen.getByTestId('captured-bottom');
+    expect(top).toHaveAttribute('data-by', 'black');
+    expect(top).toHaveAttribute('data-pieces', 'wR');
+    expect(top).toHaveAccessibleName('Captured by Black: 1 rook');
+    expect(bottom).toHaveAttribute('data-by', 'white');
+    expect(bottom).toHaveAttribute('data-pieces', 'bQ bN bp bp');
+    expect(bottom).toHaveAccessibleName('Captured by White: 1 queen, 1 knight, 2 pawns');
+    expect(bottom.querySelectorAll('img')).toHaveLength(4);
+    expect(bottom.querySelectorAll('.captured-group')).toHaveLength(3);
+  });
+
+  it('swaps sides when the board is viewed from Black', async () => {
+    routes['POST /api/games'] = () => ({ status: 201, json: view({ captured }) });
+    render(<App />);
+    await ready();
+    await userEvent.setup().click(screen.getByRole('button', { name: 'View from Black' }));
+    expect(screen.getByTestId('captured-top')).toHaveAttribute('data-pieces', 'bQ bN bp bp');
+    expect(screen.getByTestId('captured-bottom')).toHaveAttribute('data-pieces', 'wR');
+  });
+
+  it('says nothing has been captured at the start', async () => {
+    render(<App />);
+    await ready();
+    expect(screen.getByTestId('captured-top')).toHaveAccessibleName('Captured by Black: nothing');
+    expect(screen.getByTestId('captured-top').querySelectorAll('img')).toHaveLength(0);
   });
 });

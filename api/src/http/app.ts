@@ -54,6 +54,7 @@ export function toGameView(record: GameRecord): GameView {
     status: game.status,
     pgn: game.pgnList(),
     lastMove: game.lastMove,
+    captured: game.captured(),
   };
 }
 

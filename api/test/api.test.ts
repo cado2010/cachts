@@ -38,7 +38,7 @@ describe('POST /api/games', () => {
     const view = await create(setup().app);
     expect(view).toMatchObject({
       fen: START_FEN, toMove: 'white', humanColor: 'white', engineColor: 'black', status: { state: 'active' },
-      pgn: [], lastMove: null,
+      pgn: [], lastMove: null, captured: { white: [], black: [] },
     });
     expect(view.board).toHaveLength(64);
     expect(view.board[0]).toBe('wR');

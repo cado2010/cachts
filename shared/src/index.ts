@@ -32,6 +32,8 @@ export interface GameView {
   status: GameStatus;
   pgn: string[];
   lastMove: LastMove | null;
+  /** The opponent's pieces each side has captured in this game, highest rank first. */
+  captured: Record<Color, PieceCode[]>;
 }
 
 export interface EngineMoveInfo {

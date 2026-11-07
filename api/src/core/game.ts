@@ -4,7 +4,8 @@ import type { Color, GameStatus, LastMove, MoveErrorCode, PieceCode } from '@cac
 import { START_FEN, parseFen, toFen } from './fen.ts';
 import { ParseError, parseMoveInput, resolveClick, resolveParsed, san, sanBase } from './notation.ts';
 import {
-  BISHOP, BLACK, KNIGHT, PAWN, Position, WHITE, isCastle, moveFrom, moveTo, other, sideOf, sqName, typeOf, type Side,
+  BISHOP, BLACK, FLAG_EN_PASSANT, KNIGHT, PAWN, Position, WHITE, isCapture, isCastle, moveFlags, moveFrom, moveTo, other,
+  sideOf, sqName, typeOf, type Side,
 } from './position.ts';
 
 export interface HistoryEntry {
@@ -14,6 +15,8 @@ export interface HistoryEntry {
   bookPly: string;
   side: Side;
   pieceType: number;
+  /** The type of piece captured, or 0. */
+  captured: number;
   /** True when played for the engine's side (not Aid Engine Move, which counts as the human's). */
   byEngine: boolean;
 }
@@ -117,6 +120,7 @@ export class Game {
       bookPly: sanBase(pos, move, legal),
       side: pos.side,
       pieceType: typeOf(pos.board[moveFrom(move)]),
+      captured: !isCapture(move) ? 0 : moveFlags(move) & FLAG_EN_PASSANT ? PAWN : typeOf(pos.board[moveTo(move)]),
       byEngine,
     };
     pos.make(move);
@@ -193,6 +197,15 @@ export class Game {
   boardCodes(): (PieceCode | null)[] {
     return Array.from(this.pos.board, (p) =>
       p === 0 ? null : (`${sideOf(p) === WHITE ? 'w' : 'b'}${PIECE_CODES[typeOf(p)]}` as PieceCode));
+  }
+
+  /** Piece type numbers run queen, rook, bishop, knight, pawn, so sorting them gives rank order. */
+  captured(): Record<Color, PieceCode[]> {
+    const taken: Record<Color, number[]> = { white: [], black: [] };
+    for (const h of this.history) if (h.captured) taken[toColor(h.side)].push(h.captured);
+    const codes = (types: number[], victim: 'w' | 'b'): PieceCode[] =>
+      types.sort((a, b) => a - b).map((t) => `${victim}${PIECE_CODES[t]}` as PieceCode);
+    return { white: codes(taken.white, 'b'), black: codes(taken.black, 'w') };
   }
 
   fen(): string {

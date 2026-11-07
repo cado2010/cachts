@@ -244,3 +244,25 @@ test('fits a phone-width screen without sideways scrolling', async ({ page }) =>
   expect(widths[0]).toBeLessThanOrEqual(widths[1]);
   await expect(square(page, 'e1')).toBeVisible();
 });
+
+test('captured pieces show beside the board, and follow the board when it flips', async ({ page }) => {
+  await openApp(page);
+  await createBoard(page, '4k3/8/8/3p4/4P3/8/8/4K3 w - -');
+  await typeMove(page, 'exd5');
+  await humanTurn(page, 'White');
+  const top = page.getByTestId('captured-top');
+  const bottom = page.getByTestId('captured-bottom');
+  await expect(bottom).toHaveAttribute('data-pieces', 'bp');
+  await expect(bottom).toHaveAccessibleName('Captured by White: 1 pawn');
+  await expect(top).toHaveAttribute('data-pieces', '');
+  await expect(bottom.locator('img')).toHaveJSProperty('complete', true);
+  await page.screenshot({ path: 'test-results/captured-pieces.png' });
+
+  await page.getByRole('button', { name: 'View from Black' }).click();
+  await expect(top).toHaveAttribute('data-pieces', 'bp');
+  await expect(bottom).toHaveAttribute('data-pieces', '');
+
+  await page.getByRole('button', { name: 'Undo' }).click();
+  await expect(page.getByTestId('captured-top')).toHaveAttribute('data-pieces', '');
+  await expect(page.getByTestId('captured-bottom')).toHaveAttribute('data-pieces', '');
+});

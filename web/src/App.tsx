@@ -4,9 +4,11 @@ import { isGameOver, type Color, type GameView, type PromotionLetter } from '@ca
 import { ApiFailure, api, type MoveInput } from './api.ts';
 import { browser, isReloadShortcut } from './browser.ts';
 import { Board } from './components/Board.tsx';
+import { CapturedPieces } from './components/CapturedPieces.tsx';
 import { Dialog, type DialogRequest } from './components/Dialog.tsx';
 import {
-  afterMove, colorTitle, displayedColor, initialOrientation, isInProgress, pressViewButton, setLocked, squareName, statusText,
+  afterMove, colorTitle, displayedColor, initialOrientation, isInProgress, other, pressViewButton, setLocked, squareName,
+  statusText,
   type OrientationState,
 } from './view.ts';
 
@@ -355,6 +357,8 @@ export function App() {
       <header className="app-header"><h1>Cach</h1></header>
       <main className="layout">
         <section className="board-area">
+          {/* Each player's captures sit on their side of the board, so they swap when it flips. */}
+          <CapturedPieces by={other(view)} pieces={game.captured[other(view)]} position="top" />
           <Board
             game={game}
             view={view}
@@ -363,6 +367,7 @@ export function App() {
             disabled={controlsDisabled}
             onSquareClick={onSquareClick}
           />
+          <CapturedPieces by={view} pieces={game.captured[view]} position="bottom" />
         </section>
 
         <aside className="moves-panel">
